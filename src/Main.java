@@ -153,16 +153,49 @@ public class Main {
                 }
             }
         }
-
-
         boolean addInput = true;
         while (addInput) {
+            System.out.println("How do you want to test? Y - Batch test, N - Single input");
+            if (getYesNo(s)) {
+                batchTestTM(s, tm);
+            } else {
+                testTM(s, tm);
+            }
+            System.out.println("Keep testing? (Y/N)");
+            addInput = getYesNo(s);
+        }
+        System.out.println("Here is your TM code for future testing!");
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        System.out.println(tm.getCode());
+        s.close();
+
+    }
+
+    public static void batchTestTM(Scanner s, TMController tm) {
+        System.out.println("Enter the input strings comma-separated in format: 'test, aabb, string'");
+        String strings = s.nextLine();
+        Matcher stringsMatcher = Pattern.compile("([A-Za-z0-9]+)(, [A-Za-z0-9]+)*").matcher(strings);
+        if (stringsMatcher.matches()) {
+            tm.getBreakpoints().clear();
+            for (String sub : stringsMatcher.group(0).split(",")) {
+                tm.addTape(new TMTape(sub.trim()));
+                tm.reset();
+                int out = tm.fastForward();
+                System.out.println("'" + sub.trim() + "' is " + (out == 1 ? "REJECTED" : "ACCEPTED") + " with final state \n" + tm);
+            }
+        } else {
+            System.out.println("Invalid format.");
+        }
+    }
+
+    public static void testTM(Scanner s, TMController tm) {
             System.out.println("Enter the TM input string:");
             String input = s.nextLine();
             tm.addTape(new TMTape(input));
             tm.reset();
             System.out.println(tm);
             tm.getBreakpoints().clear();
+            System.out.println("Breakpoints: " + tm.getBreakpoints());
             System.out.println("Set breakpoints? (Y/N)");
             if (getYesNo(s)) {
                 System.out.println("Type states to set as breakpoints in format: 'q0, q1, q2'");
@@ -194,15 +227,6 @@ public class Main {
             } else if (out == 0) {
                 System.out.println("Your Turing Machine ACCEPTS input " + input);
             }
-            System.out.println("Try another input? (Y/N)");
-            addInput = getYesNo(s);
-        }
-
-        System.out.println("Here is your TM code for future testing!");
-        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        System.out.println(tm.getCode());
-        s.close();
-
     }
 
     public static boolean getYesNo(Scanner s) {
