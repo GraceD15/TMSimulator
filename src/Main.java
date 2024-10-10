@@ -193,7 +193,6 @@ public class Main {
             String input = s.nextLine();
             tm.addTape(new TMTape(input));
             tm.reset();
-            System.out.println(tm);
             tm.getBreakpoints().clear();
             System.out.println("Breakpoints: " + tm.getBreakpoints());
             System.out.println("Set breakpoints? (Y/N)");
@@ -215,6 +214,7 @@ public class Main {
             }
 
             System.out.println("Press enter to step. Type 'ff' to fast forward to the end or next breakpoint.");
+            System.out.println(tm);
             int out = (s.nextLine().contains("ff")) ? tm.fastForward() : tm.step();
             System.out.println(tm);
             while (out == 2) {
